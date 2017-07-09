@@ -1,5 +1,6 @@
 {
     "require": {
-        "workerman/workerman": "^3.4"
+        "workerman/workerman": "^3.4",
+        "workerman/mysql": "^1.0"
     }
 }

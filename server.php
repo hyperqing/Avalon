@@ -28,4 +28,10 @@ $worker->onConnect = function (TcpConnection $connection) {
     $connection->send('用户' . $connection->id . '已上线');
 };
 
+$worker->onWorkerStart = function (Worker $worker) {
+    // 将db实例存储在全局变量中(也可以存储在某类的静态成员中)
+    global $db;
+    $db = new Workerman\MySQL\Connection('', '', '', '', '');
+};
+
 Worker::runAll();
