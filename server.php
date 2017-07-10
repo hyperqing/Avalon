@@ -7,7 +7,7 @@ use Workerman\Worker;
 require_once __DIR__ . '/vendor/workerman/workerman/Autoloader.php';
 
 // 创建一个Worker监听2345端口，使用http协议通讯
-$worker = new Worker("websocket://0.0.0.0:52233");
+$worker = new \hyperqing\AvalonWorker("websocket://0.0.0.0:52233");
 
 // 单进程，暂不考虑多进程通信
 $worker->count = 1;
@@ -29,6 +29,7 @@ $worker->onWorkerStart = function (Worker $worker) {
 $worker->onConnect = function (TcpConnection $connection) {
     // 介入握手过程
     $connection->onWebSocketConnect = function (TcpConnection $connection, $http_header) {
+        // TODO 过滤表单
         // 读取表单
         $phone = $_GET['phone'];
         $password = $_GET['password'];

@@ -9,5 +9,10 @@
       "type": "vcs",
       "url": "https://git.coding.net/clyoko/laputa.git"
     }
-  ]
+  ],
+  "autoload": {
+    "psr-4": {
+      "hyperqing\\": "src/"
+    }
+  }
 }
