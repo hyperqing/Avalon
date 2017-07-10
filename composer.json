@@ -1,6 +1,13 @@
 {
-    "require": {
-        "workerman/workerman": "^3.4",
-        "workerman/mysql": "^1.0"
+  "require": {
+    "workerman/workerman": "^3.4",
+    "workerman/mysql": "^1.0",
+    "hyperqing/laputa": "dev-master"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://git.coding.net/clyoko/laputa.git"
     }
+  ]
 }
