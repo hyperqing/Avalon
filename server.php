@@ -48,7 +48,8 @@ $worker->onConnect = function (TcpConnection $connection) {
         if (!\hyperqing\Password::verify($password, $account['user_password'])) {
             $connection->send('手机或密码错误');
             $connection->close();
-            return;        }
+            return;
+        }
         // 登录成功的情况，绑定用户id
         $connection->user_id = $account['user_id'];
         $connection->phone = $account['user_phone'];
@@ -64,8 +65,13 @@ $worker->onConnect = function (TcpConnection $connection) {
 $worker->onMessage = function (TcpConnection $connection, $data) {
     // 测试假设消息内只有userid，则将本次消息投递到该id客户端中
     global $worker;
-    if (isset($worker->useridList[$data])) {
-        $worker->useridList[$data]->send('来自 ' . $connection->user_id . ' 的信息: ' . $data);
+    $data = json_decode($data, true);
+    // 如果对方上线，发给对方一份，也发给自己一份
+    if (isset($worker->useridList[$data['user_id']])) {
+        $worker->useridList[$data['user_id']]->send('来自 ' . $connection->user_name . ' 的信息: ' . $data['content']);
+        $connection->send('我说：' . $data['content']);
+    } else {
+        $connection->send('对方不在线');
     }
 };
 
