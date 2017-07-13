@@ -4,6 +4,11 @@ namespace hyperqing;
 
 use Workerman\MySQL\Connection;
 
+/**
+ * 数据库单例
+ * 线程级，只允许在线程内使用
+ * @package hyperqing
+ */
 class Db
 {
     /**

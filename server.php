@@ -53,10 +53,18 @@ $worker->onConnect = function (TcpConnection $connection) {
     // 此处不添加代码，按照回调执行顺序，先执行$worker->onConnect，然后$connection->onWebSocketConnect。
 };
 
-// 监听消息
+/**
+ * 监听消息
+ * @param TcpConnection $connection
+ * @param $data
+ */
 $worker->onMessage = function (TcpConnection $connection, $data) {
     global $worker;
-    $data = json_decode($data, true);
+    $json = json_decode($data, true);
+    //
+    switch ($json['method']) {
+
+    }
 
     if (isset($worker->useridList[$data['user_id']])) {
         $worker->useridList[$data['user_id']]->send('来自 ' . $connection->user_name . ' 的信息: ' . $data['content']);
