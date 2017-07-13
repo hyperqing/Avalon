@@ -61,13 +61,14 @@ $worker->onConnect = function (TcpConnection $connection) {
 $worker->onMessage = function (TcpConnection $connection, $data) {
     global $worker;
     $json = json_decode($data, true);
-    //
+    // 按请求的功能进行处理
     switch ($json['method']) {
-
+        case 'sendMsg':
+            break;
     }
 
     if (isset($worker->useridList[$data['user_id']])) {
-        $worker->useridList[$data['user_id']]->send('来自 ' . $connection->user_name . ' 的信息: ' . $data['content']);
+        $worker->useridList[$data['user_id']]->send('来自 ' . $connection->user_name . ' 的信息: ' . $data['q']);
         $connection->send('我说：' . $data['content']);
     } else {
         $connection->send('对方不在线');
