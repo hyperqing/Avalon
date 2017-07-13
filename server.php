@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Workerman\Connection\TcpConnection;
+use hyperqing\AvalonTcpConnection;
 use Workerman\Worker;
 
 require_once __DIR__ . '/vendor/workerman/workerman/Autoloader.php';
@@ -26,9 +26,9 @@ $worker->onWorkerStart = function (Worker $worker) {
     );
 };
 
-$worker->onConnect = function (TcpConnection $connection) {
+$worker->onConnect = function (AvalonTcpConnection $connection) {
     // 介入握手过程
-    $connection->onWebSocketConnect = function (TcpConnection $connection, $http_header) {
+    $connection->onWebSocketConnect = function (AvalonTcpConnection $connection, $http_header) {
         // TODO 过滤表单
         // 读取表单
         $phone = $_GET['phone'];
@@ -52,7 +52,7 @@ $worker->onConnect = function (TcpConnection $connection) {
         }
         // 登录成功的情况，绑定用户id
         $connection->user_id = $account['user_id'];
-        $connection->phone = $account['user_phone'];
+        $connection->user_phone = $account['user_phone'];
         $connection->user_name = $account['user_name'];
         // 存入连接对象数组，方便使用
         global $worker;
@@ -61,9 +61,8 @@ $worker->onConnect = function (TcpConnection $connection) {
     // 此处不添加代码，按照回调执行顺序，先执行$worker->onConnect，然后$connection->onWebSocketConnect。
 };
 
-// 接收到浏览器发送的数据时回复hello world给浏览器
-$worker->onMessage = function (TcpConnection $connection, $data) {
-    // 测试假设消息内只有userid，则将本次消息投递到该id客户端中
+// 接收数据后的处理
+$worker->onMessage = function (AvalonTcpConnection $connection, $data) {
     global $worker;
     $data = json_decode($data, true);
     // 如果对方上线，发给对方一份，也发给自己一份
