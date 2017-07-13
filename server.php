@@ -18,7 +18,10 @@ $worker->count = 1;
 $worker->onWorkerStart = function (Worker $worker) {
 };
 
-// 连接过程处理
+/**
+ * 连接握手过程
+ * @param TcpConnection $connection
+ */
 $worker->onConnect = function (TcpConnection $connection) {
     // 介入握手过程
     $connection->onWebSocketConnect = function (TcpConnection $connection, $http_header) {
@@ -64,14 +67,34 @@ $worker->onMessage = function (TcpConnection $connection, $data) {
     // 按请求的功能进行处理
     switch ($json['method']) {
         case 'sendMsg':
+            // 检查对方是否在线
+            if (isset($worker->useridList[$data['recv_user_id']])) {
+                $recv_user = $worker->useridList[$data['recv_user_id']];
+                // 封装返回消息
+                $ret = [
+                ];
+                $recv_user->send(json_encode($ret));
+            } else {
+                // TODO 对方不在线的情况，这里应将消息存入数据库，待对方上线后获取
+                // 封装返回消息给自己
+                $connection->send('对方不在线');
+            }
             break;
     }
+};
 
-    if (isset($worker->useridList[$data['user_id']])) {
-        $worker->useridList[$data['user_id']]->send('来自 ' . $connection->user_name . ' 的信息: ' . $data['q']);
-        $connection->send('我说：' . $data['content']);
-    } else {
-        $connection->send('对方不在线');
+/**
+ * 用户下线处理
+ *
+ * 及时释放空间，对于非极端情况下线，可以正常处理
+ * @param TcpConnection $connection
+ */
+$worker->onClose = function (TcpConnection $connection) {
+    // TODO 后期结合长连接心跳检测实现
+    if (isset($connection->user_id)) {
+        global $worker;
+        // 从用户列表中释放
+        unset($worker->useridList[$connection->user_id]);
     }
 };
 
