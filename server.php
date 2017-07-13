@@ -52,7 +52,7 @@ $worker->onConnect = function (TcpConnection $connection) {
         }
         // 登录成功的情况，绑定用户id
         $connection->user_id = $account['user_id'];
-        $connection->phone = $account['user_phone'];
+        $connection->user_phone = $account['user_phone'];
         $connection->user_name = $account['user_name'];
         // 存入连接对象数组，方便使用
         global $worker;
