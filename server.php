@@ -64,16 +64,31 @@ $worker->onConnect = function (TcpConnection $connection) {
 $worker->onMessage = function (TcpConnection $connection, $data) {
     global $worker;
     $json = json_decode($data, true);
+    // 检查参数数目
+    if (!isset($json['method']) || !isset($json['args'])) {
+        $ret = [
+            'status' => 0,
+            'info' => '参数错误'
+        ];
+        $connection->send($ret);
+        return;
+    }
     // 按请求的功能进行处理
     switch ($json['method']) {
         case 'sendMsg':
             // 检查对方是否在线
-            if (isset($worker->useridList[$data['recv_user_id']])) {
-                $recv_user = $worker->useridList[$data['recv_user_id']];
+            if (isset($worker->useridList[$json['args']['recv_user_id']])) {
+                $recv_user = $worker->useridList[$json['args']['recv_user_id']];
                 // 封装返回消息
                 $ret = [
+                    'status' => 1,
+                    'info' => '发送成功',
+                    'from_userid' => $json['args']['recv_user_id'],
+                    'from_username' => $connection->user_name,
+                    'content' => $json['args']['content']
                 ];
                 $recv_user->send(json_encode($ret));
+
             } else {
                 // TODO 对方不在线的情况，这里应将消息存入数据库，待对方上线后获取
                 // 封装返回消息给自己
