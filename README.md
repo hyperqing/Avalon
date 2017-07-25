@@ -66,14 +66,14 @@ WebSocket服务器能够处理各种任务，故发往服务器的消息应告�
 
 | 取值 | 描述 |
 | ---- | ---- |
-| sendMsg | 请求发送这条信息 |
+| send_msg | 请求发送这条信息 |
 
 `args`具体参数列表见各方法的说明。
 
 例如:一对一发送消息
 ```json
 {
-  "method":"sendMsg",
+  "method":"send_msg",
   "args":{
     "recv_user_id":"user_id",
     "content":"消息内容"
@@ -88,7 +88,7 @@ WebSocket服务器能够处理各种任务，故发往服务器的消息应告�
 {
   "status":"1",
   "info" :"收到新消息",
-  "type" : "recv_new_info",
+  "type" : "recv_new_msg",
   "data":{
     "from_userid":"user_id",
     "from_username":"用户名",
@@ -104,7 +104,7 @@ WebSocket服务器能够处理各种任务，故发往服务器的消息应告�
 
 **方法名**
 ```
-sendMsg
+send_msg
 ```
 
 **参数列表**
@@ -117,7 +117,7 @@ sendMsg
 请求示例
 ```json
 {
-  "method":"sendMsg",
+  "method":"send_msg",
   "args":{
     "recv_user_id":"user_id",
     "content":"消息内容"
@@ -133,7 +133,7 @@ sendMsg
 {
   "status":"1",
   "info" :"收到新消息",
-  "type" : "recv_new_info",
+  "type" : "recv_new_msg",
   "data":{
     "from_userid":"user_id",
     "from_username":"用户名",

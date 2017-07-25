@@ -67,34 +67,49 @@ $worker->onMessage = function (TcpConnection $connection, $data) {
     // 检查参数数目
     if (!isset($json['method']) || !isset($json['args'])) {
         $ret = [
+            'type' => 'response',
             'status' => 0,
             'info' => '参数错误'
         ];
-        $connection->send($ret);
+        $connection->send(json_encode($ret));
         return;
     }
     // 按请求的功能进行处理
     switch ($json['method']) {
-        case 'sendMsg':
+        case 'send_msg':
+            /**
+             * 一对一发送消息
+             * 参数
+             * recv_user_id: 接收者用户id
+             * content: 内容
+             */
             // 检查对方是否在线
             if (isset($worker->useridList[$json['args']['recv_user_id']])) {
                 $recv_user = $worker->useridList[$json['args']['recv_user_id']];
-                // 封装返回消息
+                // 发给对方的消息
                 $ret = [
+                    'type' => 'recv_new_msg', // 新消息
                     'status' => 1,
-                    'info' => '发送成功',
-                    'from_userid' => $json['args']['recv_user_id'],
-                    'from_username' => $connection->user_name,
-                    'content' => $json['args']['content']
+                    'info' => '收到新消息',
+                    'from_userid' => $connection->user_id,
+                    'content' => $json['args']['content'],
+                    'post_time' => date('Y-m-d H:i:s')
                 ];
                 $recv_user->send(json_encode($ret));
-
+                // 发给自己的消息
+                $ret = [
+                    'type' => 'send_msg_report',
+                    'status' => 1,
+                    'info' => '发送成功'
+                ];
+                $connection->send(json_encode($ret));
             } else {
                 // TODO 对方不在线的情况，这里应将消息存入数据库，待对方上线后获取
                 // 封装返回消息给自己
                 $connection->send('对方不在线');
             }
             break;
+        default:
     }
 };
 
