@@ -86,6 +86,8 @@ $worker->onMessage = function (TcpConnection $connection, $data) {
             // 检查对方是否在线
             if (isset($worker->useridList[$json['args']['recv_user_id']])) {
                 $recv_user = $worker->useridList[$json['args']['recv_user_id']];
+                // 过滤内容，防止XSS攻击
+                $json['args']['content'] = htmlspecialchars($json['args']['content'],ENT_QUOTES);
                 // 发给对方的消息
                 $ret = [
                     'type' => 'recv_new_msg', // 新消息
